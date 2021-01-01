@@ -16,8 +16,8 @@ class CrawlMonthRevenueView(views.APIView):
         month_dates = serializers.validated_data.pop('months', None)
 
         for mon_date in month_dates:
-            request_month_revenue.delay(mon_date['year'], mon_date['month'], 'sii', 'non')
-            request_month_revenue.delay(mon_date['year'], mon_date['month'], 'otc', 'non')
+            request_month_revenue.delay(mon_date['year'], mon_date['month'], 'sii')
+            request_month_revenue.delay(mon_date['year'], mon_date['month'], 'otc')
 
         save_files.delay(len(month_dates)*2, 4)
 

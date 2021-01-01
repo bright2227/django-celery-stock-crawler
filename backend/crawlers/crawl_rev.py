@@ -3,13 +3,13 @@ import requests
 import pandas as pd
 from io import StringIO
 from celery import shared_task
-from crawlers.request_proxy import post_proxy_methods
+from crawlers.request_proxy import request_post
 import csv
 import os
 
 
 @shared_task
-def request_month_revenue(year, month, stock_type, proxy):
+def request_month_revenue(year, month, stock_type):
     # insert dispatcher by date
     filename = f'MonthRevenue_{year}_{month}_{stock_type}.csv'
     date = f"{year}-{month}-15"
@@ -22,7 +22,7 @@ def request_month_revenue(year, month, stock_type, proxy):
     url = "https://mops.twse.com.tw/server-java/FileDownLoad"
 
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
-            'Host': 'mops.twse.com.tw', # 404 error
+            'Host': 'mops.twse.com.tw', 
             'Referer': f'https://mops.twse.com.tw/nas/t21/{stock_type}/t21sc03_{year}_{month}.html',
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "Accept-Encoding": "gzip, deflate, br",
@@ -35,7 +35,6 @@ def request_month_revenue(year, month, stock_type, proxy):
             'filePath': f"/home/html/nas/t21/{stock_type}/",
             'fileName': f"t21sc03_{year}_{month}.csv"}
 
-    request_post = post_proxy_methods[proxy]
     res = request_post(url, headers, data)  
     res.encoding = 'utf-8-sig'  #直接省略 csv中開頭\ufeff
 
