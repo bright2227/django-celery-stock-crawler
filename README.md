@@ -124,7 +124,7 @@ CELERY_BEAT_SCHEDULE = {
 
 1. 當前celery版本和django結合有bug，CELERY_BEAT_SCHEDULE的args至少要兩個參數才會執行，如果只有一個如'args': (2)則會報錯，flower監控只會出現兩個task。
 
-2. 目前證交所主要還是擋IP，而我目前有的proxy只有scrapingbee，scrapingbee試用戶不支持concurrency，所以目前還無法真正的異步爬取，之後會補上更多proxy，使其達到真正異步爬取。
+2. 證交所主是擋IP，使用proxypage獲得大量的proxy異步爬取，但proxy連線品質不穩定，可能會失敗個幾次。
 
 
 
