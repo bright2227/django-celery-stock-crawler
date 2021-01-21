@@ -105,6 +105,12 @@ CELERY_BEAT_SCHEDULE = {
     }
 ```
 
+**獲取proxy**
+
+使用此proxypage api(https://english.api.rakuten.net/proxypage/api/proxypage1/endpoints)獲取proxy。
+先建立backend/crawlers/api_keys.py，寫下api_key  ```ROXYPAGE = "yourapikey"```。 再輸入 ```celery call crawlers.request_proxy.request_proxy_ips_proxypage --broker redis://redis:6379/0```讓celery去取得proxy ip。
+
+
 **監視爬取結果**
 
 輸入網址localhost/flower，可在此即時監控celery爬取結果。
@@ -124,7 +130,7 @@ CELERY_BEAT_SCHEDULE = {
 
 1. 當前celery版本和django結合有bug，CELERY_BEAT_SCHEDULE的args至少要兩個參數才會執行，如果只有一個如'args': (2)則會報錯，flower監控只會出現兩個task。
 
-2. 目前證交所主要還是擋IP，而我目前有的proxy只有scrapingbee，scrapingbee試用戶不支持concurrency，所以目前還無法真正的異步爬取，之後會補上更多proxy，使其達到真正異步爬取。
+2. 證交所主是擋IP，使用proxypage獲得大量的proxy可以異步爬取，但proxy連線品質不穩定，可能會失敗個幾次。
 
 
 
