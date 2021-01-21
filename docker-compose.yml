@@ -71,8 +71,6 @@ services:
       - postgres
     restart: always    
 
-
-    
 volumes:
   postgres:
   pgadmin: 

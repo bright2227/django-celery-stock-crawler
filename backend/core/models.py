@@ -11,8 +11,9 @@ import pandas as pd
 from io import StringIO
 import sys
 
+
 Base = declarative_base()
-engine = create_engine(db_url, pool_recycle=3600, pool_size=10 )
+engine = create_engine(db_url, pool_recycle=3600, pool_size=20 )
 
 
 class MonthRevenue(AbstractConcreteBase, Base):
@@ -21,14 +22,14 @@ class MonthRevenue(AbstractConcreteBase, Base):
     company_id = Column('公司代號', Integer)
     company_name = Column("公司名稱", String(12))
     industry = Column("產業別", String(12))
-    rev_cm = Column("營業收入_當月營收", BigInteger) #Current month
-    rev_pm = Column("營業收入_上月營收", BigInteger) #Previous month
-    rev_lm = Column("營業收入_去年當月營收", BigInteger) #Last year month
-    rev_mom = Column("營業收入_上月比較增減百分比", Float) #Month on month
-    rev_yoy = Column("營業收入_去年同月增減百分比", Float) #Year on year
-    acu_rev_m = Column('累計營業收入_當月累計營收', BigInteger) # accumulate
-    acu_rev_l = Column('累計營業收入_去年累計營收', BigInteger) 
-    acu_rev_qoq = Column('累計營業收入_前期比較增減百分比', Float) # 
+    rev_cm = Column("當月營收", BigInteger) #Current month
+    rev_pm = Column("上月營收", BigInteger) #Previous month
+    rev_lm = Column("去年當月營收", BigInteger) #Last year month
+    rev_mom = Column("上月比較增減百分比", Float) #Month on month
+    rev_yoy = Column("去年同月增減百分比", Float) #Year on year
+    acu_rev_m = Column('當月累計營收', BigInteger) # accumulate
+    acu_rev_l = Column('去年累計營收', BigInteger) 
+    acu_rev_qoq = Column('前期比較增減百分比', Float) # 
     remark = Column('備註', Text) # 
     __table_args__ = {
         "mysql_charset" : "utf8"
@@ -86,8 +87,22 @@ def save_files(files_n, times):
     conn.close()
     return 
 
+
+def save_db(obj_list, model, engine):
+    Base = declarative_base()
+    DBSession = scoped_session(sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine
+    ))
+    DBSession.bulk_insert_mappings(model, obj_list)
+    DBSession.commit()
+    DBSession.remove()    
+
+
 if __name__ == '__main__':
-    # create tables docker exec -it crawl_app_web_1 python3 -m core.models create
+    # create tables 
+    # docker exec -it crawl_app_web_1 python3 -m core.models create
     if len(sys.argv) == 2:
 
         if sys.argv[1] == 'create':
@@ -102,3 +117,5 @@ if __name__ == '__main__':
             DBSession.configure(bind=engine, autoflush=False, expire_on_commit=False)
             Base.metadata.drop_all(engine)
 
+        DBSession.commit()
+        DBSession.remove()  

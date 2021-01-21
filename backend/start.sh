@@ -1,4 +1,4 @@
-# python manage.py wait_for_db
+python manage.py runscript add_api_names
 python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate

@@ -5,6 +5,7 @@ import django
 import os
 import redis
 
+
 pool = redis.ConnectionPool(host='redis', port=6379, decode_responses=True)
 re = redis.Redis(connection_pool=pool)
 
